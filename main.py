@@ -7,10 +7,6 @@ from TeamTeleRoid.forcesub import ForceSub
 import asyncio
 
 # Bot Client for Inline Search
-from client import Bot
-
-print("Bot Started 👍 Powered By @insightweav")
-Bot().run()
 
 @Bot.on_message(filters.private & filters.command("start"))
 async def start_handler(_, event: Message):
