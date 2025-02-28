@@ -9,6 +9,8 @@ import asyncio
 # Bot Client for Inline Search
 
 @Bot.on_message(filters.private & filters.command("start"))
+async def start_command(client, message):
+    await message.reply("Hello! I'm alive.")
 async def start_handler(_, event: Message):
 	await event.reply_photo("https://telegra.ph/file/19eeb26fa2ce58765917a.jpg",
                                 caption=Config.START_MSG.format(event.from_user.mention),
