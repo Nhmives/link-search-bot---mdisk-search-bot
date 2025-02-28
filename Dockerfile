@@ -2,18 +2,15 @@
 FROM python:latest
 
 # Installing Packages
+
+FROM python:3.10.8-slim-buster
+
 RUN apt update && apt upgrade -y
-RUN apt install git curl python3-pip ffmpeg -y
-
-# Updating Pip Packages
-RUN pip3 install -U pip
-
-# Copying Requirements
+RUN apt install git -y
 COPY requirements.txt /requirements.txt
 
-# Installing Requirements
 RUN cd /
-RUN pip3 install -U -r requirements.txt
+RUN pip3 install -U pip && pip3 install -U -r requirements.txt
 RUN mkdir /MessageSearchBot
 WORKDIR /MessageSearchBot
 COPY start.sh /start.sh
