@@ -6,21 +6,6 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from TeamTeleRoid.forcesub import ForceSub
 import asyncio
 
-# Bot Client for Inline Search
-Bot = Client(
-    "my_bot",
-    api_id=20496814,  # Replace with your API ID
-    api_hash="a87c1094edd18650e5dfee0f2bc78bda",
-    bot_token="8088395659:AAHKN6PeVKEe2SdFg1VfYOdzyvUz84QqfI4"
-)
-
-@Bot.on_message(filters.private & filters.command("start"))
-async def start_command(client, message):
-    await message.reply("Hello! I'm alive.")
-
-# Start the bot
-Bot.run()
-
 async def start_handler(_, event: Message):
 	await event.reply_photo("https://telegra.ph/file/19eeb26fa2ce58765917a.jpg",
                                 caption=Config.START_MSG.format(event.from_user.mention),
