@@ -5,29 +5,14 @@ class Config(object):
     API_ID = os.environ.get("API_ID", "")
     API_HASH = os.environ.get("API_HASH", "")
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
-    BOT_SESSION_NAME = os.environ.get("BOT_SESSION_NAME", "Teraboxlink_search_bot")
     USER_SESSION_STRING = os.environ.get("USER_SESSION_STRING", "")
-    CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002265381777"))
-    BOT_USERNAME = os.environ.get("BOT_USERNAME")
+    CHANNEL_ID = int(os.environ.get("CHANNEL_ID", ""))
+    BOT_USERNAME = os.environ.get("BOT_USERNAME", "Teraboxlink_search_bot")
     BOT_OWNER = int(os.environ.get("BOT_OWNER"))
     DATABASE_URL = os.environ.get("DATABASE_URL")
     UPDATES_CHANNEL = os.environ.get("UPDATES_CHANNEL", None)
     ABOUT_BOT_TEXT = """<b>This is Link Search Bot.
     
-   import logging
-from pyrogram import Client
-
-logging.basicConfig(level=logging.INFO)
-
-Bot = Client("my_session", api_id=20496814, api_hash="a87c1094edd18650e5dfee0f2bc78bda", bot_token="8088395659:AAHKN6PeVKEe2SdFg1VfYOdzyvUz84QqfI4")
-
-@Bot.on_message()
-def handle_message(client, message):
-    print(f"Received message: {message.text}")  # Debugging output
-    message.reply("Hello!")
-
-Bot.run()
-
     
 🤖 My Name: <a href='https://t.me/greymatters_about'>Link Search Bot</a>
 
