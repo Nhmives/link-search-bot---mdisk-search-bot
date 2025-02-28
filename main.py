@@ -12,12 +12,6 @@ from client import Bot
 print("Bot Started 👍 Powered By @insightweav")
 Bot().run()
 
-# User Client for Searching in Channel.
-User = Client(
-    api_id=Config.API_ID,
-    api_hash=Config.API_HASH
-)
-
 @Bot.on_message(filters.private & filters.command("start"))
 async def start_handler(_, event: Message):
 	await event.reply_photo("https://telegra.ph/file/19eeb26fa2ce58765917a.jpg",
