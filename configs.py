@@ -2,7 +2,7 @@ import os
 
 
 class Config(object):
-    API_ID = int(os.environ.get("API_ID", "20496814")
+    API_ID = os.environ.get("API_ID", "20496814")
     API_HASH = os.environ.get("API_HASH", "a87c1094edd18650e5dfee0f2bc78bda")
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
     BOT_SESSION_NAME = os.environ.get("BOT_SESSION_NAME", "Teraboxlink_search_bot")
