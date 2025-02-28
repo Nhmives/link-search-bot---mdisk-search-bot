@@ -14,7 +14,20 @@ class Config(object):
     UPDATES_CHANNEL = os.environ.get("UPDATES_CHANNEL", None)
     ABOUT_BOT_TEXT = """<b>This is Link Search Bot.
     
-    
+   import logging
+from pyrogram import Client
+
+logging.basicConfig(level=logging.INFO)
+
+Bot = Client("my_session", api_id=20496814, api_hash="a87c1094edd18650e5dfee0f2bc78bda", bot_token="8088395659:AAHKN6PeVKEe2SdFg1VfYOdzyvUz84QqfI4")
+
+@Bot.on_message()
+def handle_message(client, message):
+    print(f"Received message: {message.text}")  # Debugging output
+    message.reply("Hello!")
+
+Bot.run()
+
     
 🤖 My Name: <a href='https://t.me/greymatters_about'>Link Search Bot</a>
 
