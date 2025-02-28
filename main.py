@@ -8,7 +8,7 @@ BOT_TOKEN = "8157106185:AAFclqf84nHsscIbD8R2V3Xi8w8FkDiObaA"
 SESSION_STRING = "YOUR_SESSION_STRING"
 
 # List of channels to search
-CHANNELS = [-1001234567890, -1009876543210]  # Replace with your channel IDs
+CHANNELS = [-1002325240013, -1002321506152]  # Replace with your channel IDs
 
 # Initialize bot
 bot = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
