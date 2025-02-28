@@ -1,142 +1,54 @@
-from configs import Config
-from pyrogram import Client, filters, idle
-from pyrogram.errors import QueryIdInvalid
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InlineQuery, InlineQueryResultArticle, \
-    InputTextMessageContent
-from TeamTeleRoid.forcesub import ForceSub
-import asyncio
+import sqlite3
+from pyrogram import Client, filters
 
-# Bot Client for Inline Search
-Bot = Client(
-    name="my_session",
-    session_string="your_session_string",
-    api_id=12345,
-    api_hash="your_api_hash",
-    bot_token="your_bot_token"
-)
+# Telegram API credentials
+API_ID = "20496814"
+API_HASH = "a87c1094edd18650e5dfee0f2bc78bda"
+BOT_TOKEN = "8157106185:AAFclqf84nHsscIbD8R2V3Xi8w8FkDiObaA"
+SESSION_STRING = "YOUR_SESSION_STRING"
 
+# List of channels to search
+CHANNELS = [-1001234567890, -1009876543210]  # Replace with your channel IDs
 
-# User Client for Searching in Channel.
-User = Client(
-    session_name=Config.USER_SESSION_STRING,
-    api_id=Config.API_ID,
-    api_hash=Config.API_HASH
-)
+# Initialize bot
+bot = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+user = Client("user", api_id=API_ID, api_hash=API_HASH, session_string=SESSION_STRING)
 
-@Bot.on_message(filters.private & filters.command("start"))
-async def start_handler(_, event: Message):
-	await event.reply_photo("https://telegra.ph/file/19eeb26fa2ce58765917a.jpg",
-                                caption=Config.START_MSG.format(event.from_user.mention),
-                                reply_markup=InlineKeyboardMarkup([
-					[InlineKeyboardButton('❤ Donation Link', url='https://www.telegram.dog/greymatters_about')],
-					[InlineKeyboardButton("Updates 𝙲𝚑𝚊𝚗𝚗𝚊𝚕", url="https://t.me/greymatters_about")],
-					[InlineKeyboardButton("Donation", callback_data="Help_msg"),
-                                        InlineKeyboardButton("About", callback_data="About_msg")]
-				]))
+# SQLite Database setup
+conn = sqlite3.connect("movies.db")
+cursor = conn.cursor()
+cursor.execute("CREATE TABLE IF NOT EXISTS movies (title TEXT, link TEXT)")
+conn.commit()
 
-@Bot.on_message(filters.private & filters.command("help"))
-async def help_handler(_, event: Message):
+# Function to fetch movie links
+async def fetch_movies():
+    async with user:
+        for channel in CHANNELS:
+            async for message in user.get_chat_history(channel):
+                if message.document:
+                    title = message.document.file_name
+                    link = message.link
+                    cursor.execute("INSERT INTO movies VALUES (?, ?)", (title, link))
+                    conn.commit()
 
-    await event.reply_text(Config.ABOUT_HELP_TEXT.format(event.from_user.mention),
-        reply_markup=InlineKeyboardMarkup([
-		[InlineKeyboardButton('❤ Donation Link', url='https://www.telegram.dog/greymatters_about')
-	 ],[InlineKeyboardButton("Updates 𝙲𝚑𝚊𝚗𝚗𝚊𝚕", url="https://t.me/GreyMatter_Bots"), 
-             InlineKeyboardButton("𝙰𝚋𝚘𝚞𝚝", callback_data="About_msg")]
-        ])
-    )
+# Command to search movies
+@bot.on_message(filters.private & filters.text)
+async def search_movie(client, message):
+    query = message.text.lower()
+    cursor.execute("SELECT title, link FROM movies WHERE title LIKE ?", ('%' + query + '%',))
+    results = cursor.fetchall()
 
-@Bot.on_message(filters.incoming)
-async def inline_handlers(_, event: Message):
-    if event.text == '/start':
-        return
-    answers = f'**📂 Results For ➠ {event.text} \n\n➠ Type Only Movie Name With Correct Spelling.✍️\n➠ Add Year For Better Result.🗓️\n➠ Join @GreyMatter_Bots\n▰▱▰▱▰▱▰▱▰▱▰▱▰▱\n\n**'
-    async for message in User.search_messages(chat_id=Config.CHANNEL_ID, limit=50, query=event.text):
-        if message.text:
-            thumb = None
-            f_text = message.text
-            msg_text = message.text.html
-            if "|||" in message.text:
-                f_text = message.text.split("|||", 1)[0]
-                msg_text = message.text.html.split("|||", 1)[0]
-            answers += f'**🍿 Title ➠ ' + '' + f_text.split("\n", 1)[0] + '' + '\n\n📜 About ➠ ' + '' + f_text.split("\n", 2)[-1] + ' \n\n▰▱▰▱▰▱▰▱▰▱▰▱▰▱\nLink Will Auto Delete In 60Sec...⏰\n\n**'
-    try:
-        msg = await event.reply_text(answers)
-        await asyncio.sleep(65)
-        await event.delete()
-        await msg.delete()
-    except:
-        print(f"[{Config.BOT_SESSION_NAME}] - Failed to Answer - {event.from_user.first_name}")
+    if results:
+        response = "\n".join([f"{title}\n👉 [Download]({link})" for title, link in results])
+    else:
+        response = "No results found."
 
+    await message.reply_text(response, disable_web_page_preview=True)
 
-@Bot.on_callback_query()
-async def button(bot, cmd: CallbackQuery):
-        cb_data = cmd.data
-        if "About_msg" in cb_data:
-            await cmd.message.edit(
-			text=Config.ABOUT_BOT_TEXT,
-			disable_web_page_preview=True,
-			reply_markup=InlineKeyboardMarkup(
-				[
-					[
-						InlineKeyboardButton('❤ Donation Link', url='https://www.telegram.dog/greymatters_about')
-					],
-					[
-						InlineKeyboardButton("Updates 𝙲𝚑𝚊𝚗𝚗𝚊𝚕", url="https://t.me/GreyMatter_Bots")
-					],
-					[
-						InlineKeyboardButton("Home", callback_data="gohome")
-					]
-				]
-			),
-			parse_mode="html"
-		)
-        elif "Help_msg" in cb_data:
-            await cmd.message.edit(
-			text=Config.ABOUT_HELP_TEXT,
-			disable_web_page_preview=True,
-			reply_markup=InlineKeyboardMarkup(
-				[
-					[
-					InlineKeyboardButton('❤ Donation Link', url='https://www.telegram.dog/greymatters_about')
-					],
-					[
-					InlineKeyboardButton("Updates 𝙲𝚑𝚊𝚗𝚗𝚊𝚕", url="https://t.me/GreyMatter_Bots")
-					], 
-                                        [
-					InlineKeyboardButton("Home", callback_data="gohome"),
-					InlineKeyboardButton("About", callback_data="About_msg")
-					]
-				]
-			),
-			parse_mode="html"
-		)
-        elif "gohome" in cb_data:
-            await cmd.message.edit(
-			text=Config.START_MSG.format(cmd.from_user.mention),
-			disable_web_page_preview=True,
-			reply_markup=InlineKeyboardMarkup(
-				[
-                                        [
-					InlineKeyboardButton('❤ Donation Link', url='https://www.telegram.dog/greymatters_about')
-					],
-					[
-					InlineKeyboardButton("Updates 𝙲𝚑𝚊𝚗𝚗𝚊𝚕", url="https://t.me/GreyMatter_Bots")
-					],
-					[
-					InlineKeyboardButton("Donation", callback_data="Help_msg"),
-					InlineKeyboardButton("About", callback_data="About_msg")
-					]
-				]
-			),
-			parse_mode="html"
-		)
+# Start bot
+async def main():
+    await fetch_movies()  # Fetch latest movie links
+    bot.run()
 
-# Start Clients
-Bot.start()
-User.start()
-# Loop Clients till Disconnects
-idle()
-# After Disconnects,
-# Stop Clients
-Bot.stop()
-User.stop()
+bot.start()
+user.run()
