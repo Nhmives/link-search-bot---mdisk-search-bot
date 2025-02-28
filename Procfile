@@ -1,2 +1,2 @@
-worker: python src/man.py
+worker: python src/bot.py
 
