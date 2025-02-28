@@ -7,11 +7,10 @@ from TeamTeleRoid.forcesub import ForceSub
 import asyncio
 
 # Bot Client for Inline Search
-Bot = Client(
-    api_id=Config.API_ID,
-    api_hash=Config.API_HASH,
-    bot_token=Config.BOT_TOKEN
-)
+from client import Bot
+
+print("Bot Started 👍 Powered By @insightweav")
+Bot().run()
 
 # User Client for Searching in Channel.
 User = Client(
