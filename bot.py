@@ -5,7 +5,6 @@ from pyrogram import Client, filters
 API_ID = "20496814"
 API_HASH = "a87c1094edd18650e5dfee0f2bc78bda"
 BOT_TOKEN = "8157106185:AAFclqf84nHsscIbD8R2V3Xi8w8FkDiObaA"
-SESSION_STRING = "YOUR_SESSION_STRING"
 
 # List of channels to search
 CHANNELS = [-1002325240013, -1002321506152]  # Replace with your channel IDs
