@@ -3,7 +3,7 @@ import sqlite3
 from pyrogram import Client, filters
 
 # Load bot credentials from environment variables
-API_ID = int(os.getenv("20496814"))
+API_ID = os.getenv("20496814"))
 API_HASH = os.getenv("a87c1094edd18650e5dfee0f2bc78bda")
 BOT_TOKEN = os.getenv("8157106185:AAFclqf84nHsscIbD8R2V3Xi8w8FkDiObaA")
 
